@@ -15,3 +15,5 @@ Icon
 .Spotlight-V100
 .Trashes
 
+vim.symlink/bundle
+!vim.symlink/bundle/vundle
