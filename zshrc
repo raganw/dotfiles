@@ -28,19 +28,22 @@ hchbaw/opp.zsh
 zsh-users/zsh-completions src
 zsh-users/zsh-syntax-highlighting
 zsh-users/zsh-history-substring-search
-# $ZSHA_BASE/bundles/stv
+$ZSHA_BASE/bundles/ragan
 EOBUNDLES
+
+antigen bundle Lokaltog/powerline powerline/bindings/zsh
 
 if [ "$OSTYPE"="darwin11.0" ]; then
   antigen-bundle osx
 fi
 
-antigen theme agnoster
+# antigen theme agnoster
 
 # antigen-theme $ZSHA_BASE/themes/mgdm/mgdm.zsh-theme
 
 antigen-apply
 
 source /opt/boxen/env.sh
+export PATH=$PATH:/opt/boxen/nodenv/versions/v0.10/bin
 
 export EDITOR=vim

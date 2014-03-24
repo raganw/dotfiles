@@ -2,7 +2,6 @@
 set nocompatible
 set laststatus=2
 set encoding=utf-8
-let g:Powerline_symbols = 'fancy'
 filetype off
 set shell=/bin/bash
 set rtp+=~/.vim/bundle/vundle/
@@ -10,4 +9,6 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-fugitive'
 Bundle 'ctrlp.vim'
-Bundle 'Lokaltog/vim-powerline'
+python from powerline.vim import setup as powerline_setup
+python powerline_setup()
+python del powerline_setup
