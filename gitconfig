@@ -1,0 +1,45 @@
+
+[hub]
+protocol = https
+	host = gitent.intrepid.agile
+
+[credential]
+helper = /opt/boxen/bin/boxen-git-credential
+
+[core]
+excludesfile = /opt/boxen/config/git/gitignore
+[user]
+	name = Ragan Webber
+	email = raganw@gmail.com
+[branch]
+	autosetuprebase = always
+
+[alias]
+# Various shortcuts
+br = branch -a
+branches = branch -a
+ca = commit -a -m
+ci = commit
+co = checkout
+dff = diff --no-ext-diff
+di = diff --staged
+pick = cherry-pick
+rbc = rebase --continue
+st = status
+
+# Render git log as graph
+lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+
+# Show new commits in master that aren't in current branch
+new = log master.. --reverse
+
+# Checkout pull request as local branch
+pr = !f() { git fetch -fu upstream refs/pull/$1/head:pr/$1; } ; f
+
+# Remove all local pull request branches
+pr-clean = !git for-each-ref 'refs/heads/pr/*' --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done
+
+# Checkout pull request against your origin
+pro = !f() { git fetch -fu origin refs/pull/$1/head:pr/$1; } ; f
+[mergetool]
+	keepBackup = true
