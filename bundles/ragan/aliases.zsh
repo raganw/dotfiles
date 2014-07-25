@@ -1,2 +1,3 @@
 alias gbvv='git branch -vv'
 alias java='java -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256m'
+alias gitpurge='git branch -r --merged | grep -v master | grep -e origin | sed -e 's/origin\//:/' | xargs git push origin'
