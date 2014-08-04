@@ -1,13 +1,3 @@
-
-[hub]
-protocol = https
-	host = gitent.intrepid.agile
-
-[credential]
-helper = /opt/boxen/bin/boxen-git-credential
-
-[core]
-excludesfile = /opt/boxen/config/git/gitignore
 [user]
 	name = Ragan Webber
 	email = raganw@gmail.com
@@ -43,3 +33,5 @@ pr-clean = !git for-each-ref 'refs/heads/pr/*' --format='%(refname)' | while rea
 pro = !f() { git fetch -fu origin refs/pull/$1/head:pr/$1; } ; f
 [mergetool]
 	keepBackup = true
+[push]
+	default = matching
