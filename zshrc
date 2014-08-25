@@ -60,7 +60,6 @@ export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
 export EDITOR=vim
 export PATH=~/bin::/usr/local/bin:~/Library/Python/2.7/bin/:$PATH
 
-
 ### history
 command_oriented_history=1
 HISTCONTROL=ignoreboth
@@ -77,5 +76,3 @@ setopt hist_ignore_all_dups
 setopt hist_ignore_space
 setopt hist_reduce_blanks
 setopt hist_verify
-
-# if which nodenv > /dev/null; then eval "$(nodenv init -)"; fi
