@@ -1,5 +1,7 @@
-ZSHA_BASE=$HOME/my/dotfiles
+ZSHA_BASE=$HOME/.zsh
 source $ZSHA_BASE/antigen/antigen.zsh
+
+export PYTHONPATH=$(brew --prefix)/lib/python2.7/site-packages
 
 # For historical purposes
 HISTSIZE=10000
@@ -16,12 +18,23 @@ command-not-found
 heroku
 extract
 git
+git-extras
 github
 vagrant
 colored-man
 vi-mode
 bower
 gitignore
+rbenv
+ruby
+node
+vundle
+npm
+pip
+python
+gem
+command-not-found
+
 
 hchbaw/opp.zsh
 zsh-users/zsh-completions src
@@ -45,7 +58,8 @@ antigen-apply
 export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
 
 export EDITOR=vim
-export PATH=~/bin:/usr/local/bin:~/Library/Python/2.7/bin/:$PATH
+export PATH=~/bin::/usr/local/bin:~/Library/Python/2.7/bin/:$PATH
+
 
 ### history
 command_oriented_history=1
@@ -63,3 +77,5 @@ setopt hist_ignore_all_dups
 setopt hist_ignore_space
 setopt hist_reduce_blanks
 setopt hist_verify
+
+# if which nodenv > /dev/null; then eval "$(nodenv init -)"; fi
