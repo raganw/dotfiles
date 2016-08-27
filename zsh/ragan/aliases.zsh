@@ -3,3 +3,6 @@ alias java='java -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=
 alias gitpurge='git branch -r --merged | grep -v master | grep -e origin | sed -e 's/origin\//:/' | xargs git push origin'
 alias webserver='python -m SimpleHTTPServer 8000'
 alias dokku='ssh dokku '
+alias pbpwd='pwd|pbcopy'
+alias pbcd='cd `pbpaste`'
+alias dm='docker-machine'

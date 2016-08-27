@@ -1,0 +1,44 @@
+# Load antigen library
+source $ZSH_BASE/antigen/antigen.zsh
+
+# Load the oh-my-zsh's library.
+antigen use oh-my-zsh
+
+# Common bundles
+antigen bundle git
+antigen bundle git-extras
+antigen bundle github
+antigen bundle vagrant
+antigen bundle colored-man
+antigen bundle vi-mode
+# antigen bundle bower
+antigen bundle gitignore
+# antigen bundle heroku
+antigen bundle tmux
+antigen bundle gem
+antigen bundle command-not-found
+# antigen bundle git-flow
+antigen bundle rbenv
+antigen bundle ruby
+antigen bundle node
+# antigen bundle vundle
+antigen bundle npm
+antigen bundle pip
+antigen bundle python
+antigen bundle hchbaw/opp.zsh
+antigen bundle zsh-users/zsh-completions src
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-history-substring-search
+antigen bundle $ZSH_BASE/ragan
+
+# antigen theme murilasso
+
+if [ "$OSTYPE"="darwin15.0" ]; then
+  antigen bundle osx
+fi
+
+# Local config
+[[ -f ~/.antigenrc.local ]] && source ~/.antigenrc.local
+
+# Tell antigen that you're done
+antigen apply

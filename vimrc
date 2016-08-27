@@ -37,9 +37,9 @@ set expandtab
 set number
 set numberwidth=5
 
-if filereadable(expand("$PYTHONPATH/powerline/bindings/vim/plugin/powerline.vim"))
-  source $PYTHONPATH/powerline/bindings/vim/plugin/powerline.vim
-endif
+" python from powerline.vim import setup as powerline_setup
+" python powerline_setup()
+" python del powerline_setup
 
 command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 set guifont=InconsolataForPowerline-dz:h14
@@ -95,8 +95,31 @@ augroup vimrcEx
 
 augroup END
 
+set grepprg=ack
+
 " Local config
 if filereadable($HOME . "/.vimrc.local")
   source ~/.vimrc.local
 endif
 
+set clipboard=unnamed
+" Plugins {{{
+
+
+if empty(glob('~/.vim/autoload/plug.vim'))
+  !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall | source $MYVIMRC
+endif
+
+let g:airline_powerline_fonts = 1
+let g:tmuxline_theme = 'nightly_fox'
+let g:tmuxline_preset = 'nightly_fox'
+
+call plug#begin('~/.vim/plugged')
+Plug 'vim-airline/vim-airline'
+Plug 'edkolev/promptline.vim', { 'on': 'PromptlineSnapshot' }
+" Plug 'edkolev/tmuxline.vim', { 'on': 'Tmuxline' }
+" Plug 'adambiggs/tmuxline.vim', { 'on': 'Tmuxline' }
+call plug#end()
+
+" }}}
