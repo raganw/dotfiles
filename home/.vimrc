@@ -24,10 +24,6 @@ if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
   syntax on
 endif
 
-if filereadable(expand("~/.vimrc.bundles"))
-  source ~/.vimrc.bundles
-endif
-
 filetype plugin indent on
 set softtabstop=2
 set shiftwidth=2
@@ -36,10 +32,6 @@ set expandtab
 
 set number
 set numberwidth=5
-
-" python from powerline.vim import setup as powerline_setup
-" python powerline_setup()
-" python del powerline_setup
 
 command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 set guifont=InconsolataForPowerline-dz:h14
@@ -105,7 +97,6 @@ endif
 set clipboard=unnamed
 " Plugins {{{
 
-
 if empty(glob('~/.vim/autoload/plug.vim'))
   !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall | source $MYVIMRC
@@ -120,6 +111,44 @@ Plug 'vim-airline/vim-airline'
 Plug 'edkolev/promptline.vim', { 'on': 'PromptlineSnapshot' }
 " Plug 'edkolev/tmuxline.vim', { 'on': 'Tmuxline' }
 " Plug 'adambiggs/tmuxline.vim', { 'on': 'Tmuxline' }
+" Define bundles via Github repos
+" Plug 'cakebaker/scss-syntax.vim'
+" Plug 'danro/rename.vim'
+" Plug 'kchmck/vim-coffee-script'
+" Plug 'kien/ctrlp.vim'
+" Plug 'majutsushi/tagbar'
+" Plug 'mattn/gist-vim'
+" Plug 'mattn/webapi-vim'
+" Plug 'millermedeiros/vim-statline'
+" Plug 'mustache/vim-mustache-handlebars'
+" Plug 'nanotech/jellybeans.vim'
+" Plug 'pangloss/vim-javascript'
+" Plug 'rizzatti/dash.vim'
+" Plug 'scrooloose/nerdcommenter'
+" Plug 'scrooloose/nerdtree'
+" Plug 'scrooloose/syntastic'
+" Plug 'thoughtbot/vim-rspec'
+" Plug 'tpope/vim-bundler'
+" Plug 'tpope/vim-cucumber'
+" Plug 'tpope/vim-dispatch'
+" Plug 'tpope/vim-endwise'
+" Plug 'tpope/vim-fireplace'
+" Plug 'tpope/vim-fugitive'
+" Plug 'tpope/vim-classpath'
+" Plug 'tpope/vim-git'
+" Plug 'tpope/vim-haml'
+" Plug 'tpope/vim-markdown'
+" Plug 'tpope/vim-rails'
+" Plug 'tpope/vim-surround'
+" Plug 'tpope/vim-unimpaired'
+" Plug 'vim-ruby/vim-ruby'
+" Plug 'vim-scripts/YankRing.vim'
+" Plug 'vim-scripts/bufexplorer.zip'
+" Plug 'vim-scripts/csv.vim'
+" Plug 'vim-scripts/ctags.vim'
+" Plug 'snipmate'
+" Plug 'tComment'
+" Plug 'paredit.vim'
 call plug#end()
 
 " }}}
