@@ -1,6 +1,7 @@
 [user]
 	name = Ragan Webber
-	email = raganw@gmail.com
+	email = ragan.webber@socrata.com
+	signingkey = 3939EEFA
 [branch]
 	autosetuprebase = always
 
@@ -23,7 +24,7 @@ cm = "!git add -A && git commit -m"
 save = "!git add -A && git commit -m 'SAVEPOINT'"
 wip = "!git add -u && git commit -m 'WIP' "
 undo = reset HEAD~1 --mixed
-amend = commit -a --amend
+amend = commit -a --amend --no-edit
 wipe = "!git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard"
 
 # Render git log as graph
@@ -33,14 +34,42 @@ lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen
 new = log master.. --reverse
 
 # Checkout pull request as local branch
-pr = !f() { git fetch -fu upstream refs/pull/$1/head:pr/$1; } ; f
+pr = "!f() { git fetch -fu upstream refs/pull/$1/head:pr/$1; } ; f"
 
 # Remove all local pull request branches
-pr-clean = !git for-each-ref 'refs/heads/pr/*' --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done
+pr-clean = "!git for-each-ref 'refs/heads/pr/*' --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
 
 # Checkout pull request against your origin
-pro = !f() { git fetch -fu origin refs/pull/$1/head:pr/$1; } ; f
+pro = "!f() { git fetch -fu origin refs/pull/$1/head:pr/$1; } ; f"
 [mergetool]
 	keepBackup = true
 [push]
-	default = matching
+	default = simple
+[core]
+	excludesfile = ~/.gitignore_global
+# pager = bash -lc 'diff-highlight | strip_diff_leading_symbols | less -r' -
+[filter "lfs"]
+	clean = git-lfs clean %f
+	smudge = git-lfs smudge %f
+	required = true
+[color]
+    ui = always
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+[color "diff"]
+    meta = yellow
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+[color "diff-highlight"]
+  oldNormal = "red bold"
+  oldHighlight = "red bold 52"
+  newNormal = "green bold"
+  newHighlight = "green bold 22"
+[rerere]
+	enabled = true
+[commit]
+	gpgsign = true
