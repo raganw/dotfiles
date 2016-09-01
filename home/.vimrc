@@ -1,4 +1,5 @@
 " System
+
 set nocompatible
 
 let mapleader = ","
@@ -17,6 +18,8 @@ set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusl
 set encoding=utf-8
 set shell=/usr/local/bin/zsh
 set background=dark
+set hlsearch
+nmap \q :nohlsearch<CR>
 
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.
