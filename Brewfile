@@ -7,27 +7,6 @@ tap 'homebrew/dupes'
 tap 'homebrew/services'
 tap 'homebrew/versions'
 cask 'java'
-cask 'intellij-idea'
-cask 'google-chrome'
-cask 'atom'
-cask 'dropbox'
-cask 'firefox'
-cask 'vmware-fusion'
-cask 'bartender'
-cask 'docker'
-cask 'font-inconsolata-dz-for-powerline'
-cask 'hammerspoon'
-cask 'moom'
-cask 'steam'
-cask 'vagrant'
-cask 'virtualbox'
-cask 'visualvm'
-mas 'LastPass', id: 926036361
-mas 'Caffeine', id: 411246225
-mas 'Pixelmator', id: 407963104
-mas '1Password', id: 443987910
-mas 'Slack', id: 803453959
-mas 'Dash', id: 458034879
 brew 'mas'
 brew 'openssl'
 brew 'awscli'
@@ -76,3 +55,25 @@ brew 'vim'
 brew 'wget'
 brew 'zsh'
 brew 'zsh-completions'
+cask 'intellij-idea'
+cask 'google-chrome'
+cask 'atom'
+cask 'dropbox'
+cask 'firefox'
+cask 'vmware-fusion'
+cask 'bartender'
+cask 'docker'
+cask 'font-inconsolata-dz-for-powerline'
+cask 'hammerspoon'
+cask 'monotype-skyfonts'
+cask 'moom'
+cask 'steam'
+cask 'vagrant'
+cask 'virtualbox'
+cask 'visualvm'
+mas 'LastPass', id: 926036361
+mas 'Caffeine', id: 411246225
+mas 'Pixelmator', id: 407963104
+mas '1Password', id: 443987910
+mas 'Slack', id: 803453959
+mas 'Dash', id: 458034879
