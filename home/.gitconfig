@@ -72,4 +72,3 @@ pro = "!f() { git fetch -fu origin refs/pull/$1/head:pr/$1; } ; f"
 [rerere]
 	enabled = true
 [commit]
-	gpgsign = true
