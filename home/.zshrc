@@ -63,7 +63,15 @@ else
 fi
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-alias ls='ls --color' 
+
+# Colour
+if ls --color > /dev/null 2>&1; then # GNU `ls`
+  colorflag="--color"
+else # OS X `ls`
+  colorflag="-G"
+fi
+alias l="ls -la ${colorflag}"
+alias ls="command ls ${colorflag}"
 
 iterm2_print_user_vars() {
   ITERM2_GIT_BRANCH=$(git branch --no-color 2> /dev/null | grep --color=no \* | cut -c3-)
