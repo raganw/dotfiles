@@ -71,8 +71,12 @@ ZSH_THEME="robbyrussell"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
+	eza
+  fzf
 	git
+  vi-mode
 	zsh-autosuggestions
+  zsh-interactive-cd
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -108,5 +112,17 @@ source $ZSH/oh-my-zsh.sh
 # ~/.zshrc
 
 export EDITOR='nvim'
-eval "$(starship init zsh)"
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH:/Users/ragan/.lmstudio/bin"
+
+if command -v starship >/dev/null 2>&1; then eval "$(command starship init zsh)"; fi
+if command -v atuin >/dev/null 2>&1; then eval "$(command atuin init zsh)"; fi
+if command -v mise >/dev/null 2>&1; then eval "$(command mise activate zsh)"; fi
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+
+
+# dcg: warn if hook was silently removed from Claude Code settings
+if command -v dcg &>/dev/null && command -v jq &>/dev/null; then
+  if [ -f "$HOME/.claude/settings.json" ] &&      ! jq -e '.hooks.PreToolUse[]? | select(.hooks[]?.command | test("dcg$"))'        "$HOME/.claude/settings.json" &>/dev/null; then
+    printf '\033[1;33m[dcg] Hook missing from ~/.claude/settings.json — run: dcg install\033[0m\n'
+  fi
+fi
