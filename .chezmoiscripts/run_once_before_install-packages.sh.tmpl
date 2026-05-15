@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+
+if [ ! -d "{{ .xdgConfigDir }}/tmux/plugins/tpm" ]; then
+    git clone https://github.com/tmux-plugins/tpm {{ .xdgConfigDir }}/tmux/plugins/tpm
+fi
+

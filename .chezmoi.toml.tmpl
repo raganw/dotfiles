@@ -1,0 +1,25 @@
+[data]
+  email = "raganw@gmail.com"
+  github_user = "raganw"
+  xdgCacheDir       = "{{ .chezmoi.homeDir }}/.cache"
+  xdgConfigDir      = "{{ .chezmoi.homeDir }}/.config"
+  xdgDataDir        = "{{ .chezmoi.homeDir }}/.local/share"
+  xdgStateDir       = "{{ .chezmoi.homeDir }}/.local/state"
+
+[diff]
+  pager = "delta"
+  format = "git"
+  args = [ "--paging" , "never" ]
+  exclude = [ "dirs", "externals", "scripts" ]
+
+[merge]
+  command = "nvim"
+  args = [
+    "-d",
+    "{{ "{{" }} .Destination {{ "}}" }}",
+    "{{ "{{" }} .Source {{ "}}" }}",
+    "{{ "{{" }} .Target {{ "}}" }}",
+  ]
+
+[edit]
+  command = "nvim"

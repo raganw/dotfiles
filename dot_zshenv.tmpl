@@ -1,0 +1,6 @@
+export XDG_CONFIG_HOME={{ .xdgConfigDir }}
+export XDG_DATA_HOME={{ .xdgDataDir }}
+export XDG_CACHE_HOME={{ .xdgCacheDir }}
+export DOKPLOY_URL={{ onepasswordRead (join "/" (list .onepassword.secrets.dokploy "hostname") ) }}
+export DOKPLOY_API_KEY={{ onepasswordRead (join "/" (list .onepassword.secrets.dokploy "credential") ) }}
+

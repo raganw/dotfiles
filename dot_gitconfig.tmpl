@@ -1,0 +1,134 @@
+[user]
+  email = {{ .email }}
+  name = Ragan Webber
+  signingkey = {{ onepasswordRead (join "/" (list .onepassword.secrets.github_ssh "public key") ) }}
+
+[gpg]
+  format = ssh
+
+[gpg "ssh"]
+  program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+
+[commit]
+  gpgsign = true
+
+[branch]
+  autosetuprebase = always
+
+[alias]
+  # Commit staged changes into specific commit w/o opening editor
+	fixit = "!f() { git commit --fixup=$1; GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash $1~1; }; f"
+  oldest-ancestor = !zsh -c 'diff --old-line-format='' --new-line-format='' <(git rev-list --first-parent "${1:-origin/master}") <(git rev-list --first-parent "${2:-HEAD}") | head -1'
+  ffix = !HASH=`git log --pretty=oneline | head -n 100 | fzf` && git fixit `echo ${HASH} | awk '{ print $1 }'`
+# Various shortcuts
+  ec = config --global -e
+  br = branch -a
+  branches = branch -a
+  ca = commit -a -m
+  ci = commit
+  co = checkout
+  cob = checkout -b
+  dff = diff --no-ext-diff
+  di = diff --staged
+  pick = cherry-pick
+  rbc = rebase --continue
+  st = status
+  up = "!git pull --rebase --prune $@ && git submodule update --init --recursive"
+  cm = "!git add -A && git commit -m"
+  save = "!git add -A && git commit -m 'SAVEPOINT'"
+  wip = "!git add -u && git commit -m 'WIP' "
+  undo = reset HEAD~1 --mixed
+  amend = commit -a --amend --no-edit
+  wipe = "!git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard"
+
+  # Render git log as graph
+  lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+
+  # Show new commits in master that aren't in current branch
+  new = log master.. --reverse
+
+  # Checkout pull request as local branch
+  pr = "!f() { git fetch -fu upstream refs/pull/$1/head:pr/$1; } ; f"
+
+  # Remove all local pull request branches
+  pr-clean = "!git for-each-ref 'refs/heads/pr/*' --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
+
+  # Checkout pull request against your origin
+  pro = "!f() { git fetch -fu origin refs/pull/$1/head:pr/$1; } ; f"
+
+  ls-hidden = "!git ls-files -v | grep '^h'"
+  hide = update-index --assume-unchanged
+  unhide = update-index --no-assume-unchanged
+  rs = restore --staged
+  unstage = restore --staged
+
+# show recent branches
+  short-recent = "for-each-ref --count=25 --sort=-committerdate refs/heads/ --format='%(refname:short)'"
+
+# fuzzy add using fzf
+  fza = "!git ls-files -m -o --exclude-standard | fzf --print0 -m --preview 'git diff {}' --preview-window=top:10:wrap | xargs -0 -t -o git add --all"
+
+# fuzzy restore using fzf
+  fzr = "!git ls-files -m --exclude-standard | fzf --print0 -m --preview 'git diff {}' --preview-window=top:10:wrap | xargs -0 -t -o git restore"
+
+# fuzzy restore staged using fzf
+  fzrs = "!git diff --name-only --staged | fzf --print0 -m --preview 'git diff {}' --preview-window=top:10:wrap | xargs -0 -t -o git restore --staged"
+
+# fuzzy switch branch...  /fish/functions/fco.fish seems better
+  fco = "!git short-recent | fzf --print0 | xargs -0 -t git checkout"
+  root = rev-parse --show-toplevel
+
+  rebase-master = "!git pull --rebase --autostash -v origin $(git main-branch)"
+  merge-master = "!git fetch origin && git merge --no-edit --no-ff --autostash origin/$(git main-branch)"
+
+  main-branch = "!git remote show origin | sed -n '/HEAD branch/s/.*: //p'"
+
+[mergetool]
+  keepBackup = true
+[push]
+  default = simple
+[core]
+  excludesfile = ~/.gitignore
+  editor = nvim
+[color]
+  ui = always
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+[color "diff"]
+  meta = yellow
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+[color "diff-highlight"]
+  oldNormal = "red bold"
+  oldHighlight = "red bold 52"
+  newNormal = "green bold"
+  newHighlight = "green bold 22"
+[rerere]
+  enabled = true
+[github]
+  user = raganw
+[merge]
+  ff = only
+  conflictStyle = zdiff3
+[fetch]
+  prune = true
+[rebase]
+  autosquash = true
+[init]
+  defaultBranch = main
+
+[core]
+    pager = delta
+
+[interactive]
+  diffFilter = delta --color-only
+
+[delta]
+  navigate = true  # use n and N to move between diff sections
+  dark = true      # or light = true, or omit for auto-detection
+  side-by-side = true
+  line-numbers = true
