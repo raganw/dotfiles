@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+{{ if eq .chezmoi.os "darwin" -}}
+TPM_INSTALL="{{ .xdgConfigDir }}/tmux/plugins/tpm/bin/install_plugins"
+if [[ -x "$TPM_INSTALL" ]]; then
+  "$TPM_INSTALL"
+fi
+{{- end }}
