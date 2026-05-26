@@ -1,7 +1,12 @@
-export OP_ACCOUNT=my.1password.com
+export OP_ACCOUNT={{ .onepassword.accounts.personal }}
 export XDG_CONFIG_HOME={{ .xdgConfigDir }}
 export XDG_DATA_HOME={{ .xdgDataDir }}
 export XDG_CACHE_HOME={{ .xdgCacheDir }}
 export DOKPLOY_URL={{ onepasswordRead (join "/" (list .onepassword.secrets.dokploy "hostname") ) }}
 export DOKPLOY_API_KEY={{ onepasswordRead (join "/" (list .onepassword.secrets.dokploy "credential") ) }}
+
+{{- if .is_work }}
+export RESERV_GITHUB_PACKAGE_READ_TOKEN={{ onepasswordRead .onepassword.secrets.reserv_github_package_registry .onepassword.accounts.work }}
+export RESERV_GITHUB_USERNAME={{ .github_user }}
+{{ end -}}
 
