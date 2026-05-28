@@ -1,6 +1,11 @@
+{{- /*
+vim:ft=toml.gotexttmpl
+*/ -}}
 [tools]
 bun = "latest"
 node = "25.9.0"
 pnpm = "latest"
+{{- if .is_work }}
 turbo = "latest"
+{{ end }}
 uv = "latest"
