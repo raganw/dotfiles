@@ -1,6 +1,6 @@
 [tools]
 bun = "latest"
-node = "25"
+node = "25.9.0"
 pnpm = "latest"
 turbo = "latest"
 uv = "latest"

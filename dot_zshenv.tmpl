@@ -1,3 +1,6 @@
+{{- /*
+vim:ft=zsh.gotexttmpl
+*/ -}}
 export OP_ACCOUNT={{ .onepassword.accounts.personal }}
 export XDG_CONFIG_HOME={{ .xdgConfigDir }}
 export XDG_DATA_HOME={{ .xdgDataDir }}
@@ -8,5 +11,5 @@ export DOKPLOY_API_KEY={{ onepasswordRead (join "/" (list .onepassword.secrets.d
 {{- if .is_work }}
 export RESERV_GITHUB_PACKAGE_READ_TOKEN={{ onepasswordRead .onepassword.secrets.reserv_github_package_registry .onepassword.accounts.work }}
 export RESERV_GITHUB_USERNAME={{ .github_user }}
+export JIRA_API_TOKEN={{ onepasswordRead .onepassword.secrets.reserv_jira_cli_token .onepassword.accounts.work }}
 {{ end -}}
-

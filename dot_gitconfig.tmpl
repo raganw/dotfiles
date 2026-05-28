@@ -1,3 +1,6 @@
+{{- /*
+vim:ft=toml.gotexttmpl
+*/ -}}
 [user]
   email = {{ .email }}
   name = Ragan Webber
@@ -8,6 +11,7 @@
 
 [gpg "ssh"]
   program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+	allowedSignersFile = {{ join "/" (list .xdgConfigDir "git/allowed_signers") }}
 
 [commit]
   gpgsign = true

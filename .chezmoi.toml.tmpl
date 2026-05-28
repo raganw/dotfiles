@@ -1,3 +1,6 @@
+{{- /*
+vim:ft=toml.gotexttmpl
+*/ -}}
 {{- $email := promptStringOnce . "email" "Git email" "raganw@gmail.com" -}}
 {{- $githubUser := promptStringOnce . "github_user" "GitHub username" "raganw" -}}
 {{- $isWork := promptBoolOnce . "isWork" "Is this a work system?" -}}
