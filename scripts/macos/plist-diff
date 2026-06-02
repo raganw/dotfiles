@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# chezmoi diff for one managed preference plist. Usage: plist-diff <bundle-id>
+set -euo pipefail
+[ "$#" -ge 1 ] || { echo "usage: $(basename "$0") <bundle-id>" >&2; exit 64; }
+chezmoi diff "$HOME/Library/Preferences/$1.plist"

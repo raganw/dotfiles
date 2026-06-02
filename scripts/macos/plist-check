@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# Render every plist fragment through chezmoi and lint the result. Catches
+# template syntax errors and invalid/empty plists before `chezmoi apply`
+# runs the merge engine. Exit non-zero if any fragment fails.
+#
+set -euo pipefail
+
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd "$here/../.." && pwd)"
+cd "$repo_root"
+
+shopt -s nullglob
+fragments=(.chezmoitemplates/*.plist.tmpl)
+if [ "${#fragments[@]}" -eq 0 ]; then
+  echo "no plist fragments yet"
+  exit 0
+fi
+
+rc=0
+for f in "${fragments[@]}"; do
+  if chezmoi execute-template < "$f" | plutil -lint - >/dev/null 2>&1; then
+    echo "ok    $f"
+  else
+    echo "FAIL  $f  (empty, invalid XML, or template error)"
+    rc=1
+  fi
+done
+exit "$rc"

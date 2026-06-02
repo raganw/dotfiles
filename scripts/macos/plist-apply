@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# chezmoi apply for one managed preference plist (runs guard/cfprefsd hooks).
+# Usage: plist-apply <bundle-id>
+set -euo pipefail
+[ "$#" -ge 1 ] || { echo "usage: $(basename "$0") <bundle-id>" >&2; exit 64; }
+chezmoi apply "$HOME/Library/Preferences/$1.plist"

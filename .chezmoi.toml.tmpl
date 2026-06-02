@@ -31,3 +31,21 @@ vim:ft=toml.gotexttmpl
 
 [edit]
   command = "nvim"
+
+[[textconv]]
+  command = "plutil"
+  args = ["-convert", "xml1", "-o", "-", "-"]
+  pattern = "**/*.plist"
+
+# Plist apply guards (macOS preference plists managed via modify_ stubs).
+# The pre-hook computes which managed plists would change this apply (via
+# `chezmoi status`) and refuses if any of those apps is running, so the app
+# does not overwrite our writes when it quits. The post-hook nudges cfprefsd
+# if anything changed and optionally relaunches quit apps.
+#   DOTFILES_SKIP_PLIST_HOOKS=1      short-circuits both hooks (force-apply).
+#   DOTFILES_RELAUNCH_AFTER_APPLY=1  reopens quit apps after a real apply.
+[hooks.apply.pre]
+  command = "{{ .chezmoi.sourceDir }}/scripts/chezmoi-hooks/guard-running-apps.sh"
+
+[hooks.apply.post]
+  command = "{{ .chezmoi.sourceDir }}/scripts/chezmoi-hooks/post-apply-plists.sh"

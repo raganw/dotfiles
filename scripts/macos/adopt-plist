@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+#
+# Scaffold chezmoi management for a macOS app preference domain:
+#   1. captures the app's current prefs (via capture-plist) for reference
+#   2. writes the desired-state fragment   .chezmoitemplates/<id>.plist.tmpl
+#   3. writes the 3-line modify_ stub       private_Library/private_Preferences/modify_private_<id>.plist.tmpl
+#
+# By default the fragment is a skeleton (you fill in the keys you want to
+# manage). With --from-capture it is seeded with EVERY key the app currently
+# has — a starting point to prune, not something to commit as-is.
+#
+# Usage:
+#   scripts/macos/adopt-plist com.jordanbaird.Ice
+#   scripts/macos/adopt-plist --from-capture com.manytricks.Moom
+#
+set -euo pipefail
+
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd "$here/../.." && pwd)"
+tmpl_dir="$repo_root/.chezmoitemplates"
+stub_dir="$repo_root/private_Library/private_Preferences"
+
+from_capture=0
+bundle_id=""
+for arg in "$@"; do
+  case "$arg" in
+    --from-capture) from_capture=1 ;;
+    -*) echo "adopt-plist: unknown flag '$arg'" >&2; exit 64 ;;
+    *) bundle_id="$arg" ;;
+  esac
+done
+
+if [ -z "$bundle_id" ]; then
+  echo "usage: $(basename "$0") [--from-capture] <bundle-id>" >&2
+  exit 64
+fi
+
+fragment="$tmpl_dir/$bundle_id.plist.tmpl"
+stub="$stub_dir/modify_private_$bundle_id.plist.tmpl"
+mkdir -p "$tmpl_dir" "$stub_dir"
+
+# 1. Capture (best-effort; populates ~/.local/state/.../captures and gives us
+#    a source to seed --from-capture from).
+capture_root="${DOTFILES_CAPTURE_ROOT:-${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/captures/app-settings}"
+"$here/capture-plist" "$bundle_id" >/dev/null 2>&1 || true
+capture="$capture_root/$bundle_id.plist"
+
+# 2. Fragment.
+if [ -e "$fragment" ]; then
+  echo "skip fragment (exists): ${fragment#"$repo_root"/}"
+else
+  if [ "$from_capture" = 1 ] && [ -s "$capture" ]; then
+    {
+      echo "<!-- Seeded from live capture of $bundle_id. PRUNE to only the keys"
+      echo "     you want chezmoi to own; the app keeps everything you remove. -->"
+      plutil -convert xml1 "$capture" -o -
+    } > "$fragment"
+    echo "wrote fragment (seeded from capture): ${fragment#"$repo_root"/}"
+  else
+    cat > "$fragment" <<'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Add only the keys chezmoi should own. The app keeps every key not listed.
+     Remove app-written keys with:  <!-- chezmoi-delete: KeyA, KeyB -->
+     Escape literal {{ }} in string values, e.g. {{ `{{width}}x{{height}}` }}. -->
+<plist version="1.0">
+<dict>
+</dict>
+</plist>
+EOF
+    echo "wrote fragment (skeleton): ${fragment#"$repo_root"/}"
+  fi
+fi
+
+# 3. Stub (deterministic; safe to overwrite to keep the contract in sync).
+cat > "$stub" <<EOF
+#!/usr/bin/env bash
+exec '{{ .chezmoi.sourceDir }}/scripts/macos/plist-merge' \\
+  --bundle-id '$bundle_id' \\
+  --desired-b64 '{{ includeTemplate "$bundle_id.plist.tmpl" . | b64enc }}'
+EOF
+echo "wrote stub:              ${stub#"$repo_root"/}"
+
+cat <<EOF
+
+Next:
+  1. Edit ${fragment#"$repo_root"/} to the keys you want managed.
+  2. Smoke:  chezmoi execute-template < ${fragment#"$repo_root"/}
+  3. Diff :  chezmoi diff \$HOME/Library/Preferences/$bundle_id.plist
+  4. Apply:  chezmoi apply \$HOME/Library/Preferences/$bundle_id.plist
+EOF

@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+#
+# Capture the current state of one or more macOS app preference domains as
+# readable XML, into the local captures dir (NOT committed). From a capture
+# you hand-author the desired-state fragment at
+#   .chezmoitemplates/<bundle-id>.plist.tmpl
+# and wire the modify_ stub at
+#   private_Library/private_Preferences/modify_private_<bundle-id>.plist.tmpl
+#
+# Usage:
+#   scripts/macos/capture-plist com.jordanbaird.Ice [com.manytricks.Moom ...]
+#
+# Captures land under:
+#   ${XDG_STATE_HOME:-~/.local/state}/dotfiles/captures/app-settings/
+#
+set -euo pipefail
+
+if [ "$(uname -s)" != "Darwin" ]; then
+  echo "capture-plist: macOS only; skipping." >&2
+  exit 0
+fi
+
+if [ "$#" -eq 0 ]; then
+  echo "usage: $(basename "$0") <bundle-id> [bundle-id ...]" >&2
+  echo "example: $(basename "$0") com.jordanbaird.Ice" >&2
+  exit 64
+fi
+
+capture_root="${DOTFILES_CAPTURE_ROOT:-${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/captures/app-settings}"
+mkdir -p "$capture_root"
+
+status=0
+for bundle_id in "$@"; do
+  out="$capture_root/$bundle_id.plist"
+  # `defaults export <domain> -` writes an XML plist of the whole domain to
+  # stdout, regardless of whether the backing store is binary or sandboxed.
+  if defaults export "$bundle_id" - > "$out" 2>/dev/null && [ -s "$out" ]; then
+    # Normalize to XML (export is already XML, but be explicit/defensive).
+    plutil -convert xml1 "$out" >/dev/null 2>&1 || true
+    keys=$(/usr/libexec/PlistBuddy -c "Print" "$out" 2>/dev/null | grep -c '=' || true)
+    echo "captured  $bundle_id  ->  $out  (${keys} top-level entries)"
+  else
+    rm -f "$out"
+    echo "no prefs found for '$bundle_id' (app may never have launched, or wrong bundle id)" >&2
+    status=1
+  fi
+done
+
+cat >&2 <<EOF
+
+Next steps (per captured domain):
+  1. Open the capture and pick ONLY the keys you want chezmoi to manage.
+  2. Author  .chezmoitemplates/<bundle-id>.plist.tmpl  with those keys.
+  3. Create the 3-line stub:
+       private_Library/private_Preferences/modify_private_<bundle-id>.plist.tmpl
+  4. Preview:  chezmoi execute-template < .chezmoitemplates/<bundle-id>.plist.tmpl
+               chezmoi diff ~/Library/Preferences/<bundle-id>.plist
+
+Captures are local scratch state — do NOT commit them.
+EOF
+
+exit "$status"

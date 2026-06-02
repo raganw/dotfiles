@@ -1,0 +1,8 @@
+{{/*
+  Repo-side helper scripts live under the source root (this repo IS the
+  chezmoi source dir), so without this exclude chezmoi would try to apply
+  them to ~/scripts. They are executed in place via {{ .chezmoi.sourceDir }}
+  by the plist modify_ stubs and the apply hooks, never copied to the target.
+*/}}
+scripts
+mise.toml
