@@ -1,0 +1,31 @@
+# Project tasks for this chezmoi source repo. mise loads these when CWD is the
+# repo (`chezmoi cd` lands here). Not applied to ~ — excluded via .chezmoiignore.
+# Run `mise tasks` to list. Each task calls a script under scripts/macos/ and
+# forwards the bundle id as a positional arg, e.g.:
+#   mise run plist:adopt com.jordanbaird.Ice
+#   mise run plist:adopt -- --from-capture com.manytricks.Moom   # -- forwards the flag
+#   mise run plist:diff  com.jordanbaird.Ice
+
+[tasks."plist:capture"]
+description = "Capture an app's current prefs as XML into the local captures dir"
+run = "scripts/macos/capture-plist"
+
+[tasks."plist:adopt"]
+description = "Scaffold fragment + modify_ stub for an app (-- --from-capture seeds all keys)"
+run = "scripts/macos/adopt-plist"
+
+[tasks."plist:diff"]
+description = "chezmoi diff for one managed plist"
+run = "scripts/macos/plist-diff"
+
+[tasks."plist:apply"]
+description = "chezmoi apply for one managed plist (runs the guard/cfprefsd hooks)"
+run = "scripts/macos/plist-apply"
+
+[tasks."plist:list"]
+description = "List the apps currently managed via modify_ stubs"
+run = "scripts/macos/plist-list"
+
+[tasks."plist:check"]
+description = "Render + lint every plist fragment (catches template/XML errors)"
+run = "scripts/macos/plist-check"
