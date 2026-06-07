@@ -4,8 +4,11 @@ vim:ft=toml.gotexttmpl
 [tools]
 bun = "latest"
 node = "25.9.0"
+{{ if not .is_work -}}
+odin = "latest"
+{{ end -}}
 pnpm = "latest"
-{{- if .is_work }}
+{{ if .is_work -}}
 turbo = "latest"
-{{ end }}
+{{ end -}}
 uv = "latest"
