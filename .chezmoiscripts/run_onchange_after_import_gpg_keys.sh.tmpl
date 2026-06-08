@@ -1,0 +1,13 @@
+#!/bin/sh
+{{- $filepath := join "/" (list .xdgConfigDir "git") -}}
+# upstream sha256: {{ include (join "/" (list $filepath "github-web-flow.asc")) | sha256sum }}
+
+set -eu
+
+for keyfile in {{ join "/" (list $filepath "*.asc") }}; do
+  [ -f "$keyfile" ] || continue
+  gpg --import "$keyfile" 2>/dev/null || true
+  gpg --with-colons --import-options show-only --import <"$keyfile" 2>/dev/null | awk -F: '/^fpr:/{print $10":6:"}' | tail -1 | gpg --import-ownertrust 2>/dev/null || true
+done
+
+# vim:ft=sh.gotexttmpl
