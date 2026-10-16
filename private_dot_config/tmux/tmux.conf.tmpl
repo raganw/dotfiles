@@ -110,6 +110,7 @@ set-hook -g 'pane-exited[0]' 'run-shell -b "~/.config/tmux/scripts/sidebar.sh or
 set-hook -g 'after-kill-pane[0]' 'run-shell -b "~/.config/tmux/scripts/sidebar.sh orphan"'
 
 bind -N 'Jump to the next Claude waiting on you' g run-shell '~/.config/tmux/scripts/claude-jump.sh'
+{{- if .is_work }}
 bind -N 'Open a ticket window' T display-popup -E -w 80% -h 60% "~/Developer/reserv/ai-docs/scripts/ticket-window --pick-base || { echo; echo 'Press enter to close'; read -r _; }"
 bind -N 'Ticket dashboard' G display-popup -E -w 90% -h 85% '~/Developer/reserv/ai-docs/scripts/ticket-dash'
 
@@ -117,6 +118,7 @@ bind -N 'Ticket dashboard' G display-popup -E -w 90% -h 85% '~/Developer/reserv/
 set -g @ticket_jira_sync on
 set -g @ticket_status_started 'In Progress'
 set -g @ticket_status_review 'Review'
+{{- end }}
 
 ## List of plugins
 
@@ -142,8 +144,10 @@ set -g status-right "#{E:@catppuccin_status_application}"
 # set -agF status-right "#{E:@catppuccin_status_cpu}"
 set -ag status-right "#{E:@catppuccin_status_session}"
 set -ag status-right "#{E:@catppuccin_status_uptime}"
+{{- if .is_work }}
 # Refreshes ticket windows' PR badges at most once a minute; prints nothing
 set -ag status-right "#(~/Developer/reserv/ai-docs/scripts/ticket-pr-status)"
+{{- end }}
 # set -agF status-right "#{E:@catppuccin_status_battery}"
 
 set -g @plugin 'tmux-plugins/tpm'
