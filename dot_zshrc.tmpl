@@ -17,6 +17,9 @@ source $ZSH/oh-my-zsh.sh
 
 export EDITOR='nvim'
 export PATH="$HOME/.local/bin:$PATH:/Users/ragan/.lmstudio/bin"
+{{- if .is_work }}
+[[ -f ~/.local/share/dotfiles-work/zsh/work.zsh ]] && source ~/.local/share/dotfiles-work/zsh/work.zsh
+{{- end }}
 
 if command -v starship >/dev/null 2>&1; then eval "$(command starship init zsh)"; fi
 if command -v atuin >/dev/null 2>&1; then eval "$(command atuin init zsh)"; fi
