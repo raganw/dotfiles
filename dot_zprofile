@@ -1,5 +1,9 @@
 
 eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+# brew shellenv exports FPATH, baking a versioned Cellar path into the
+# environment; after a zsh upgrade that dir vanishes and child shells lose
+# every builtin autoload (compinit, add-zsh-hook, ...). Keep fpath local.
+typeset +x FPATH
 
 # Added by Obsidian
 export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
