@@ -1,0 +1,5 @@
+{{ if .is_work -}}
+{{ .chezmoi.homeDir }}/.local/share/dotfiles-work/claude/commit-style.md
+{{- else -}}
+{{ .chezmoi.sourceDir }}/claude/commit-style.md
+{{- end }}
