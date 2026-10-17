@@ -17,13 +17,21 @@ GREEN='\033[2;32m'
 YELLOW='\033[2;33m'
 RESET='\033[0m'
 
-output="${DIM}${dir_name}${RESET}"
-
-if [ -n "$branch" ]; then
-  output="${output} ${DIM}on${RESET} ${GREEN}${branch}${RESET}"
+# Worktrunk's segment covers dir, branch, worktree status and model; fall back without it
+wt_status=""
+if command -v wt >/dev/null 2>&1; then
+  wt_status=$(echo "$input" | wt list statusline --format=claude-code 2>/dev/null)
 fi
 
-output="${output} ${DIM}|${RESET} ${CYAN}${model}${RESET}"
+if [ -n "$wt_status" ]; then
+  output="${wt_status}${RESET}"
+else
+  output="${DIM}${dir_name}${RESET}"
+  if [ -n "$branch" ]; then
+    output="${output} ${DIM}on${RESET} ${GREEN}${branch}${RESET}"
+  fi
+  output="${output} ${DIM}|${RESET} ${CYAN}${model}${RESET}"
+fi
 
 if [ -n "$remaining" ]; then
   output="${output} ${DIM}|${RESET} ${YELLOW}${remaining}% left${RESET}"
