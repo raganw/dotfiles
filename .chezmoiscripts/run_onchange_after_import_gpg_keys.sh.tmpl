@@ -1,6 +1,8 @@
 #!/bin/sh
 {{- $filepath := join "/" (list .xdgConfigDir "git") -}}
-# upstream sha256: {{ include (join "/" (list $filepath "github-web-flow.asc")) | sha256sum }}
+{{- $keyfile := join "/" (list $filepath "github-web-flow.asc") -}}
+{{- /* The key is an external, absent until the first apply fetches it; the hash then changes and this reruns */ -}}
+# upstream sha256: {{ if stat $keyfile }}{{ include $keyfile | sha256sum }}{{ else }}pending{{ end }}
 
 set -eu
 
