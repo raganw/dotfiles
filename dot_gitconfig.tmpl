@@ -142,8 +142,10 @@ vim:ft=toml.gotexttmpl
 [credential "https://gist.github.com"]
   helper =
   helper = !gh auth git-credential
+{{- if lookPath "git-lfs" }}
 [filter "lfs"]
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f
   process = git-lfs filter-process
   required = true
+{{- end }}
