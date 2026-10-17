@@ -5,4 +5,14 @@
   by the plist modify_ stubs and the apply hooks, never copied to the target.
 */}}
 scripts
+# Real files behind the ~/.claude symlinks (dot_claude/symlink_*)
+claude
 mise.toml
+
+{{- if not .is_work }}
+# Reserv-only Claude agents and skills (live in the dotfiles-work external)
+.claude/agents/jira-fetcher.md
+.claude/skills/claim-portal-browser-testing
+.claude/skills/jira-lookup
+.claude/skills/write-tdd
+{{- end }}

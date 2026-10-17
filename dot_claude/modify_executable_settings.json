@@ -1,0 +1,23 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $settings := .chezmoi.stdin | default "{}" | fromJson -}}
+{{- $settings = merge $settings (includeTemplate "claude-settings-defaults.json.tmpl" . | fromJson) -}}
+{{- $fragments := list (includeTemplate "claude-settings.json.tmpl" . | fromJson) -}}
+{{- $work := joinPath .chezmoi.homeDir ".local/share/dotfiles-work/claude/settings.json" -}}
+{{- if and .is_work (stat $work) -}}
+{{-   $fragments = append $fragments (include $work | fromJson) -}}
+{{- end -}}
+{{- /* Hook groups are added next to the live ones (e.g. dcg's), skipping duplicates, never replaced */ -}}
+{{- $hooks := get $settings "hooks" | default dict -}}
+{{- range $fragment := $fragments -}}
+{{-   range $event, $groups := get $fragment "hooks" | default dict -}}
+{{-     $merged := get $hooks $event | default list -}}
+{{-     $seen := list -}}
+{{-     range $merged }}{{ $seen = append $seen (toJson .) }}{{ end -}}
+{{-     range $groups }}{{ if not (has (toJson .) $seen) }}{{ $merged = append $merged . }}{{ end }}{{ end -}}
+{{-     $_ := set $hooks $event $merged -}}
+{{-   end -}}
+{{-   $_ := unset $fragment "hooks" -}}
+{{-   $settings = mergeOverwrite $settings $fragment -}}
+{{- end -}}
+{{- $_ := set $settings "hooks" $hooks -}}
+{{ $settings | toPrettyJson | trimSuffix "\n" -}}
