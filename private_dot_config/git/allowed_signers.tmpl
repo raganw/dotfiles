@@ -1,1 +1,4 @@
 {{ .email }} {{ onepasswordRead (join "/" (list .onepassword.secrets.github_ssh "public key")) }}
+{{- if not .is_work }}
+{{ .email }} {{ onepasswordRead (join "/" (list .onepassword.secrets.claude_code_ssh "claude_code_ed25519.pub")) | trim }}
+{{- end }}
