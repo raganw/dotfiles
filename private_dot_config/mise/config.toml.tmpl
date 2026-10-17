@@ -3,11 +3,17 @@ vim:ft=toml.gotexttmpl
 */ -}}
 [tools]
 bun = "latest"
+{{ if not .is_work -}}
+just = "latest"
+{{ end -}}
 node = "25.9.0"
 {{ if not .is_work -}}
 odin = "latest"
 {{ end -}}
 pnpm = "latest"
+{{ if not .is_work -}}
+rust = "latest"
+{{ end -}}
 {{ if .is_work -}}
 turbo = "latest"
 {{ end -}}
