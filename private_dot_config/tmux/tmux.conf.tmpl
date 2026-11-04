@@ -113,6 +113,7 @@ bind -N 'Jump to the next Claude waiting on you' g run-shell '~/.config/tmux/scr
 {{- if .is_work }}
 bind -N 'Open a ticket window' T display-popup -E -w 80% -h 60% "~/Developer/reserv/ai-docs/scripts/ticket-window --pick-base || { echo; echo 'Press enter to close'; read -r _; }"
 bind -N 'Ticket dashboard' G display-popup -E -w 90% -h 85% '~/Developer/reserv/ai-docs/scripts/ticket-dash'
+bind -N 'Review ticket reflections' F display-popup -E -w 90% -h 85% '~/Developer/reserv/ai-docs/scripts/ticket-reflections'
 
 # Move Jira tickets To Do -> In Progress on first prompt, In Progress -> Review when the PR opens
 set -g @ticket_jira_sync on
