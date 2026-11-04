@@ -44,3 +44,7 @@ case ":$PATH:" in
 esac
 # oMLX: CLI shim path end
 {{ end -}}
+{{- if .is_work }}
+# sentry
+fpath=("$HOME/.local/share/zsh/site-functions" $fpath)
+{{- end }}
