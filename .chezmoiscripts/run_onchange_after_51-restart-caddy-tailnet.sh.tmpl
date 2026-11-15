@@ -1,0 +1,26 @@
+{{- if and (eq .chezmoi.os "darwin") (hasKey .tailnet.hosts .chezmoi.hostname) -}}
+#!/bin/bash
+# (Re)starts the tailnet Caddy when its data or any of its files change:
+#   data      {{ .tailnet | toJson | sha256sum }}
+#   Caddyfile {{ include "private_dot_config/caddy/Caddyfile.tmpl" | sha256sum }}
+#   wrapper   {{ include "dot_local/bin/executable_caddy-tailnet.tmpl" | sha256sum }}
+#   plist     {{ include "private_Library/LaunchAgents/com.spiffywidgets.caddy-tailnet.plist.tmpl" | sha256sum }}
+# The Caddyfile is checked first; a bad one leaves the running Caddy alone.
+# Without the token in the Keychain the job still loads, and its wrapper
+# retries each minute until the token is there.
+set -euo pipefail
+label=com.spiffywidgets.caddy-tailnet
+plist=$HOME/Library/LaunchAgents/$label.plist
+caddy=$HOME/.local/bin/caddy
+domain="gui/$(id -u)"
+
+if ! TAILNET_IP=127.0.0.1 "$caddy" adapt --config "$HOME/.config/caddy/Caddyfile" --adapter caddyfile >/dev/null; then
+  echo "caddy-tailnet: the Caddyfile doesn't adapt; not restarted" >&2
+  exit 1
+fi
+launchctl bootout "$domain/$label" 2>/dev/null || true
+launchctl bootstrap "$domain" "$plist"
+echo "caddy-tailnet: (re)started; log: ~/Library/Logs/caddy-tailnet.log"
+security find-generic-password -s {{ .tailnet.tokenService | quote }} >/dev/null 2>&1 ||
+  echo "caddy-tailnet: waiting for the Cloudflare token: security add-generic-password -s {{ .tailnet.tokenService }} -a \"\$USER\" -w"
+{{ end -}}

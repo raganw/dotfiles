@@ -1,0 +1,27 @@
+# Services this machine serves on the tailnet as <name>.ts.spiffywidgets.com.
+#
+# Caddy listens on the machine's tailnet address, port 443, with one wildcard
+# certificate (*.ts.spiffywidgets.com, Let's Encrypt via Cloudflare DNS-01),
+# and proxies each name to a port on 127.0.0.1. Apps listen on 127.0.0.1 only.
+#
+# This file maps a name to a local port. Which machine a name points at (the
+# DNS record) and who may reach it (the tailnet policy) are in the ops repo,
+# raganw/dokploy.spiffywidgets.com, infra/tailscale/services.json. Add a
+# name in both places.
+#
+# Keyed by .chezmoi.hostname; machines not listed get no Caddy at all.
+
+[tailnet]
+  domain = "ts.spiffywidgets.com"
+  # Pinned: Homebrew tracks the newest release, and versions must be at
+  # least 14 days old. Changing either reinstalls ~/.local/bin/caddy.
+  caddyVersion = "v2.11.7"      # released 2026-10-03
+  cloudflarePlugin = "v0.2.4"   # github.com/caddy-dns/cloudflare, 2026-03-23
+  # Keychain service holding a Cloudflare API token with Zone:Read and
+  # DNS:Edit on spiffywidgets.com, used only for the DNS-01 challenge.
+  tokenService = "caddy-acme-cloudflare"
+
+[tailnet.hosts.Sawtooth]
+  services = [
+    { name = "agent", port = 18789 },  # the agent system's PWA
+  ]
