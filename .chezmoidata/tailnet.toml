@@ -33,5 +33,5 @@
 
 [tailnet.hosts.Sawtooth]
   services = [
-    { name = "agent", port = 18789 },  # the agent system's PWA
+    { name = "talisman", port = 43117 },  # Talisman, the agent system's PWA
   ]
