@@ -16,9 +16,12 @@
 [tailnet]
   domain = "ts.spiffywidgets.com"
   # Pinned: Homebrew tracks the newest release, and versions must be at
-  # least 14 days old. Changing either reinstalls ~/.local/bin/caddy.
+  # least 14 days old. Changing any of them rebuilds ~/.local/bin/caddy.
   caddyVersion = "v2.11.7"      # released 2026-10-03
   cloudflarePlugin = "v0.2.4"   # github.com/caddy-dns/cloudflare, 2026-03-23
+  # Caddy is built from source (caddyserver.com's build service only builds
+  # the newest Caddy). Go comes from mise; Caddy v2.11.7 needs Go >= 1.26.
+  goVersion = "1.26.10"         # released 2026-10-20
   # Keychain service holding a Cloudflare API token with Zone:Read and
   # DNS:Edit on spiffywidgets.com, used only for the DNS-01 challenge.
   tokenService = "caddy-acme-cloudflare"

@@ -2,13 +2,16 @@
 #!/bin/bash
 # Installs Caddy {{ .tailnet.caddyVersion }} with caddy-dns/cloudflare {{ .tailnet.cloudflarePlugin }}
 # to ~/.local/bin/caddy, for the tailnet proxy (.chezmoidata/tailnet.toml).
-# Pinned, from Caddy's own build service, because Homebrew's Caddy tracks
-# the newest release and has no DNS plugins. Reruns when a version changes.
-# The download is checked for the version and the module before it replaces
-# anything.
+# Built from source with Go {{ .tailnet.goVersion }} (from mise), pinned: Homebrew's
+# Caddy tracks the newest release and has no DNS plugins, and caddyserver.com's
+# build service ignores the version asked for and builds the newest. Go checks
+# every module against the checksum database. The build is checked for the
+# version and the plugin before it replaces anything. Reruns when a version
+# changes.
 set -euo pipefail
 want={{ .tailnet.caddyVersion | quote }}
 plugin={{ .tailnet.cloudflarePlugin | quote }}
+gover={{ .tailnet.goVersion | quote }}
 bin=$HOME/.local/bin/caddy
 
 has_build() { # <binary>: right Caddy version and plugin version?
@@ -21,15 +24,40 @@ if [[ -x $bin ]] && has_build "$bin"; then
   exit 0
 fi
 
+mise=$(command -v mise || true)
+for m in /opt/homebrew/bin/mise /usr/local/bin/mise "$HOME/.local/bin/mise"; do
+  [[ -n $mise ]] && break
+  [[ -x $m ]] && mise=$m
+done
+[[ -n $mise ]] || { echo "caddy: mise not found; it provides Go for the build" >&2; exit 1; }
+
 mkdir -p "$HOME/.local/bin"
 tmp=$(mktemp -d)
 trap 'rm -r "$tmp"' EXIT
-url="https://caddyserver.com/api/download?os=darwin&arch={{ .chezmoi.arch }}&p=github.com%2Fcaddy-dns%2Fcloudflare%40${plugin}&version=${want}"
-echo "caddy: downloading $want with caddy-dns/cloudflare $plugin"
-curl -fsSL --max-time 300 -o "$tmp/caddy" "$url"
-chmod +x "$tmp/caddy"
+cat > "$tmp/main.go" <<'EOF'
+package main
+
+import (
+	caddycmd "github.com/caddyserver/caddy/v2/cmd"
+
+	_ "github.com/caddy-dns/cloudflare"
+	_ "github.com/caddyserver/caddy/v2/modules/standard"
+)
+
+func main() { caddycmd.Main() }
+EOF
+
+echo "caddy: building $want with caddy-dns/cloudflare $plugin (Go $gover)"
+(
+  cd "$tmp"
+  export GOTOOLCHAIN=local GOFLAGS=-mod=mod CGO_ENABLED=0
+  go() { "$mise" exec "go@$gover" -- go "$@"; }
+  go mod init caddy-tailnet >/dev/null 2>&1
+  go get "github.com/caddyserver/caddy/v2@$want" "github.com/caddy-dns/cloudflare@$plugin"
+  go build -trimpath -o caddy .
+)
 if ! has_build "$tmp/caddy"; then
-  echo "caddy: the download isn't $want with caddy-dns/cloudflare $plugin; not installed:" >&2
+  echo "caddy: the build isn't $want with caddy-dns/cloudflare $plugin; not installed:" >&2
   "$tmp/caddy" version >&2 || true
   "$tmp/caddy" build-info 2>/dev/null | grep -i cloudflare >&2 || true
   exit 1
