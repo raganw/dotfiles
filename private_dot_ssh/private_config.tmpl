@@ -1,2 +1,13 @@
 Host *
 	IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+{{- if not .is_work }}
+
+# Dokploy server audit gate (raganw/dokploy.spiffywidgets.com, local/ssh_config)
+Host dokploy-ops
+  HostName 100.127.111.81
+  User claude-ops
+  IdentityFile ~/.ssh/claude-ops_ed25519
+  IdentitiesOnly yes
+  RequestTTY no
+  ServerAliveInterval 15
+{{- end }}
