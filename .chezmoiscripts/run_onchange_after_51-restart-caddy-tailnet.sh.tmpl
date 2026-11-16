@@ -22,7 +22,17 @@ if ! "$caddy" adapt --config "$HOME/.config/caddy/Caddyfile" --adapter caddyfile
   exit 1
 fi
 launchctl bootout "$domain/$label" 2>/dev/null || true
-launchctl bootstrap "$domain" "$plist"
+# bootout returns before launchd has let go of the job; bootstrapping too
+# soon fails with "5: Input/output error". Wait for it to go, then retry.
+for _ in $(seq 20); do
+  launchctl print "$domain/$label" >/dev/null 2>&1 || break
+  sleep 0.5
+done
+for try in 1 2 3 4 5; do
+  launchctl bootstrap "$domain" "$plist" 2>/dev/null && break
+  (( try == 5 )) && { launchctl bootstrap "$domain" "$plist"; exit 1; }
+  sleep 1
+done
 echo "caddy-tailnet: (re)started; log: ~/Library/Logs/caddy-tailnet.log"
 if "$ts" serve --bg --yes --tcp 443 tcp://127.0.0.1:{{ .tailnet.proxyPort }} >/dev/null; then
   echo "caddy-tailnet: tailnet :443 -> 127.0.0.1:{{ .tailnet.proxyPort }}"
