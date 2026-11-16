@@ -9,7 +9,9 @@
 # raganw/dokploy.spiffywidgets.com, infra/tailscale/services.json. Add a
 # name in both places.
 #
-# Keyed by .chezmoi.hostname; machines not listed get no Caddy at all.
+# Keyed by .chezmoi.hostname, and personal machines only: a work machine
+# (is_work) or one not listed here gets no Caddy at all (.chezmoiignore and
+# a guard at the top of each template).
 
 [tailnet]
   domain = "ts.spiffywidgets.com"

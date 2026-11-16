@@ -16,3 +16,13 @@ mise.toml
 .claude/skills/jira-lookup
 .claude/skills/write-tdd
 {{- end }}
+
+{{- if or .is_work (not (hasKey .tailnet.hosts .chezmoi.hostname)) }}
+# Tailnet proxy (Caddy for *.ts.spiffywidgets.com): personal machines listed
+# in .chezmoidata/tailnet.toml only
+.config/caddy
+.local/bin/caddy-tailnet
+Library/LaunchAgents/com.spiffywidgets.caddy-tailnet.plist
+.chezmoiscripts/50-install-caddy.sh
+.chezmoiscripts/51-restart-caddy-tailnet.sh
+{{- end }}
