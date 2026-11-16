@@ -8,19 +8,28 @@
 # The Caddyfile is checked first; a bad one leaves the running Caddy alone.
 # Without the token in the Keychain the job still loads, and its wrapper
 # retries each minute until the token is there.
+# Then it points the tailnet address's port 443 at Caddy (Tailscale keeps
+# this across restarts; `tailscale serve status` shows it).
 set -euo pipefail
 label=com.spiffywidgets.caddy-tailnet
 plist=$HOME/Library/LaunchAgents/$label.plist
 caddy=$HOME/.local/bin/caddy
+ts=/Applications/Tailscale.app/Contents/MacOS/Tailscale
 domain="gui/$(id -u)"
 
-if ! TAILNET_IP=127.0.0.1 "$caddy" adapt --config "$HOME/.config/caddy/Caddyfile" --adapter caddyfile >/dev/null; then
+if ! "$caddy" adapt --config "$HOME/.config/caddy/Caddyfile" --adapter caddyfile >/dev/null; then
   echo "caddy-tailnet: the Caddyfile doesn't adapt; not restarted" >&2
   exit 1
 fi
 launchctl bootout "$domain/$label" 2>/dev/null || true
 launchctl bootstrap "$domain" "$plist"
 echo "caddy-tailnet: (re)started; log: ~/Library/Logs/caddy-tailnet.log"
+if "$ts" serve --bg --yes --tcp 443 tcp://127.0.0.1:{{ .tailnet.proxyPort }} >/dev/null; then
+  echo "caddy-tailnet: tailnet :443 -> 127.0.0.1:{{ .tailnet.proxyPort }}"
+else
+  echo "caddy-tailnet: couldn't set tailscale serve; is Tailscale running? Rerun:" >&2
+  echo "  $ts serve --bg --tcp 443 tcp://127.0.0.1:{{ .tailnet.proxyPort }}" >&2
+fi
 security find-generic-password -s {{ .tailnet.tokenService | quote }} >/dev/null 2>&1 ||
   echo "caddy-tailnet: waiting for the Cloudflare token: security add-generic-password -s {{ .tailnet.tokenService }} -a \"\$USER\" -w"
 {{ end -}}

@@ -6,10 +6,9 @@
 # The Cloudflare token for the DNS-01 challenge comes from the Keychain at
 # start, so it's never in a file: not in the Caddyfile, not in the plist.
 # The Keychain, not 1Password, because this starts unattended at login.
-# Caddy binds to the tailnet address only, so nothing on the local network
-# reaches it; until Tailscale has an address, this waits.
+# Caddy binds to 127.0.0.1:{{ .tailnet.proxyPort }} only; Tailscale forwards the tailnet
+# address's port 443 to it (see the Caddyfile).
 set -euo pipefail
-TS=/Applications/Tailscale.app/Contents/MacOS/Tailscale
 CADDY=$HOME/.local/bin/caddy
 SERVICE={{ .tailnet.tokenService | quote }}
 
@@ -20,16 +19,8 @@ token=$(security find-generic-password -s "$SERVICE" -w 2>/dev/null) || {
   exit 78
 }
 
-ip=
-for _ in $(seq 60); do
-  ip=$("$TS" ip -4 2>/dev/null | head -1 || true)
-  [[ $ip == 100.* ]] && break
-  ip=; sleep 5
-done
-[[ -n $ip ]] || { echo "caddy-tailnet: no tailnet address after 5 minutes" >&2; exit 75; }
-
-export TAILNET_IP=$ip CLOUDFLARE_API_TOKEN=$token
+export CLOUDFLARE_API_TOKEN=$token
 unset token
-echo "caddy-tailnet: $(date '+%F %T') starting on $ip" >&2
+echo "caddy-tailnet: $(date '+%F %T') starting on 127.0.0.1:{{ .tailnet.proxyPort }}" >&2
 exec "$CADDY" run --config "$HOME/.config/caddy/Caddyfile" --adapter caddyfile
 {{ end -}}
